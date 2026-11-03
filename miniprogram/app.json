@@ -1,0 +1,64 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/watch/watch",
+    "pages/quote/quote",
+    "pages/screen/screen",
+    "pages/more/more",
+    "pages/signals/signals",
+    "pages/backtest/backtest",
+    "pages/predict/predict",
+    "pages/similar/similar",
+    "pages/auction/auction",
+    "pages/calendar/calendar",
+    "pages/settings/settings"
+  ],
+  "window": {
+    "navigationBarTitleText": "形迹",
+    "navigationBarBackgroundColor": "#14160f",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#0f110c",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#8a8576",
+    "selectedColor": "#e8c958",
+    "backgroundColor": "#14160f",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "assets/icons/home.png",
+        "selectedIconPath": "assets/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/watch/watch",
+        "text": "自选",
+        "iconPath": "assets/icons/star.png",
+        "selectedIconPath": "assets/icons/star-active.png"
+      },
+      {
+        "pagePath": "pages/quote/quote",
+        "text": "行情",
+        "iconPath": "assets/icons/chart.png",
+        "selectedIconPath": "assets/icons/chart-active.png"
+      },
+      {
+        "pagePath": "pages/screen/screen",
+        "text": "选股",
+        "iconPath": "assets/icons/grid.png",
+        "selectedIconPath": "assets/icons/grid-active.png"
+      },
+      {
+        "pagePath": "pages/more/more",
+        "text": "更多",
+        "iconPath": "assets/icons/more.png",
+        "selectedIconPath": "assets/icons/more-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

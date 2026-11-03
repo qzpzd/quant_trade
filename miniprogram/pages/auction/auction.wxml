@@ -1,0 +1,50 @@
+<view class="page">
+  <symbol-bar bind:change="run" />
+
+  <view class="busy-bar" wx:if="{{busyShow}}">
+    <view class="busy-bar-row">
+      <text class="busy-bar-text">{{busyText}}</text>
+      <text class="busy-bar-pct">{{busyPctText}}</text>
+    </view>
+    <view class="busy-track"><view class="busy-fill" style="width:{{busyPct}}%"></view></view>
+  </view>
+
+  <view class="toolbar">
+    <button class="btn primary" loading="{{busy}}" bindtap="run">分析竞价</button>
+  </view>
+
+  <view class="card" wx:if="{{open}}">
+    <view class="section-title">早盘集合竞价 09:15–09:25</view>
+    <view class="stats">
+      <view class="stat" wx:for="{{openStats}}" wx:key="k">
+        <view class="k">{{item.k}}</view>
+        <view class="v">{{item.v}}</view>
+      </view>
+    </view>
+    <view class="hint" style="margin-top:12rpx">{{openNote}}</view>
+  </view>
+
+  <view class="card" wx:if="{{close}}">
+    <view class="section-title">尾盘集合竞价 14:57–15:00</view>
+    <view class="stats">
+      <view class="stat" wx:for="{{closeStats}}" wx:key="k">
+        <view class="k">{{item.k}}</view>
+        <view class="v">{{item.v}}</view>
+      </view>
+    </view>
+    <view class="hint" style="margin-top:12rpx">{{closeNote}}</view>
+  </view>
+
+  <view class="card" wx:if="{{hist.length}}">
+    <view class="section-title">历史竞价摘要</view>
+    <view class="list-item" wx:for="{{hist}}" wx:key="index">
+      <view class="grow">
+        <view>{{item.title}}</view>
+        <view class="hint">{{item.sub}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="hint" wx:if="{{notes}}">{{notes}}</view>
+  <view class="empty" wx:if="{{!busy && !open && !close}}">点「分析竞价」加载当前股票</view>
+</view>

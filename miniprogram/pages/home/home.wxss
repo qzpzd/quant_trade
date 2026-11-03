@@ -1,0 +1,17 @@
+.chip-scroll {
+  width: 100%;
+  height: 64rpx;
+  margin-bottom: 12rpx;
+}
+.chip-line {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 10rpx;
+  height: 64rpx;
+}
+.chip-line .chip {
+  flex: none;
+  margin-right: 0;
+  white-space: nowrap;
+}

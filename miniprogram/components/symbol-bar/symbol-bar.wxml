@@ -1,0 +1,26 @@
+<view class="bar">
+  <view class="search-wrap">
+    <input class="inp" value="{{query}}" placeholder="代码或名称" bindinput="onQuery" confirm-type="search" bindconfirm="onConfirm" />
+    <view class="suggest" wx:if="{{suggests.length}}">
+      <view class="si" wx:for="{{suggests}}" wx:key="symbol" data-symbol="{{item.symbol}}" bindtap="pick">
+        <text>{{item.symbol}}</text>
+        <text class="m">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+  <view class="dates">
+    <view class="date-cell">
+      <text class="dl">起</text>
+      <picker mode="date" value="{{start}}" bindchange="onStart">
+        <view class="date-val">{{start}}</view>
+      </picker>
+    </view>
+    <view class="date-cell">
+      <text class="dl">止</text>
+      <picker mode="date" value="{{end}}" bindchange="onEnd">
+        <view class="date-val">{{end}}</view>
+      </picker>
+    </view>
+    <button class="go" bindtap="onConfirm">载入</button>
+  </view>
+</view>

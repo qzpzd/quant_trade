@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "行情",
+  "usingComponents": {
+    "symbol-bar": "/components/symbol-bar/symbol-bar"
+  }
+}

@@ -1,0 +1,70 @@
+<view class="page">
+  <symbol-bar bind:change="onBarChange" />
+
+  <view class="toolbar">
+    <button class="btn" loading="{{busy}}" bindtap="onAnalyze">买卖点</button>
+    <button class="btn" bindtap="onToggleWatch">{{watching ? '取消自选' : '☆自选'}}</button>
+    <button class="btn" bindtap="panLeft">←</button>
+    <button class="btn" bindtap="panRight">→</button>
+    <button class="btn" bindtap="zoomOut">缩小</button>
+    <button class="btn" bindtap="zoomIn">放大</button>
+  </view>
+
+  <view class="card" wx:if="{{quote}}">
+    <view class="row">
+      <view class="grow">
+        <view style="font-size:32rpx;font-weight:600">{{quote.name}} {{quote.symbol}}</view>
+        <view class="hint">{{subText}}</view>
+      </view>
+      <view class="{{chgClass}}" style="font-size:38rpx;font-weight:700;text-align:right">
+        <view>{{closeText}}</view>
+        <view style="font-size:24rpx">{{chgText}}</view>
+      </view>
+    </view>
+    <!-- 对齐 Web 抽屉详情指标 -->
+    <view class="stats" style="margin-top:14rpx">
+      <view class="stat"><view class="k">倾向</view><view class="v">{{stance}}</view></view>
+      <view class="stat"><view class="k">状态</view><view class="v">{{regime}}</view></view>
+      <view class="stat"><view class="k">RSI</view><view class="v">{{rsiText}}</view></view>
+      <view class="stat"><view class="k">量比</view><view class="v">{{volRatioText}}</view></view>
+      <view class="stat"><view class="k">换手</view><view class="v">{{turnoverText}}</view></view>
+      <view class="stat"><view class="k">成交量</view><view class="v">{{volText}}</view></view>
+      <view class="stat"><view class="k">成交额</view><view class="v">{{amountText}}</view></view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">K 线 / 成交量 · {{winText}}</view>
+    <view
+      class="chart-box tall"
+      catchtouchstart="onTouchStart"
+      catchtouchmove="onTouchMove"
+      catchtouchend="onTouchEnd"
+      catchtouchcancel="onTouchEnd"
+    >
+      <canvas type="2d" id="kline" class="chart-canvas"></canvas>
+    </view>
+    <view class="hint" style="margin-top:8rpx">单指左右滑动 K 线；竖线钉在触点，底部显示该日开高低收/量额等。双指缩放。</view>
+  </view>
+
+  <view class="card" wx:if="{{analyze}}">
+    <view class="section-title">详细提醒</view>
+    <view class="hint" style="margin:0 0 12rpx">{{analyze.regime_reason || ''}}</view>
+    <view class="list-item" wx:for="{{reasons}}" wx:key="index">
+      <view class="grow">
+        <view>{{item.source || item.action}} · {{item.reason}}</view>
+        <view class="hint" wx:if="{{item.date}}">{{item.date}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">快捷研究</view>
+    <view class="toolbar" style="margin-bottom:0">
+      <button class="btn" bindtap="go" data-url="/pages/backtest/backtest">回测</button>
+      <button class="btn" bindtap="go" data-url="/pages/predict/predict">预测</button>
+      <button class="btn" bindtap="go" data-url="/pages/similar/similar">形态</button>
+      <button class="btn" bindtap="go" data-url="/pages/auction/auction">竞价</button>
+    </view>
+  </view>
+</view>

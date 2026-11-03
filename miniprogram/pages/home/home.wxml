@@ -1,0 +1,190 @@
+<view class="page">
+  <view class="card warn" wx:if="{{needLan}}">
+    <view class="section-title">真机无法连后端</view>
+    <view class="hint">请到连接设置填写电脑局域网 IP（如 http://192.168.3.202:8765）</view>
+    <button class="btn primary" bindtap="goSettings">去设置</button>
+  </view>
+
+  <!-- 股票选择：对齐 Web 顶栏搜索 -->
+  <view class="search-wrap">
+    <view class="field" style="margin-bottom:0">
+      <text class="label">搜索代码 / 名称</text>
+      <input
+        class="input"
+        value="{{searchQ}}"
+        placeholder="如 002195 或 二三四五"
+        bindinput="onSearchInput"
+        confirm-type="search"
+        bindconfirm="onSearchConfirm"
+      />
+    </view>
+    <view class="suggest" wx:if="{{suggests.length}}">
+      <view
+        class="suggest-item"
+        wx:for="{{suggests}}"
+        wx:key="symbol"
+        data-symbol="{{item.symbol}}"
+        bindtap="pickSuggest"
+      >
+        <view class="grow">
+          <text class="code">{{item.symbol}}</text>
+          <text style="margin-left:12rpx">{{item.name}}</text>
+        </view>
+        <text class="{{item.pctClass}}">{{item.close}} {{item.pctText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="toolbar">
+    <button class="btn primary" loading="{{busy}}" bindtap="onRefreshCache">更新缓存</button>
+    <button class="btn" loading="{{busy}}" bindtap="onRefreshAlerts">重扫提醒</button>
+    <button class="btn ghost" bindtap="onReload">刷新</button>
+  </view>
+
+  <view class="card" wx:if="{{cache}}">
+    <view class="stats">
+      <view class="stat"><view class="k">上次更新</view><view class="v" style="font-size:22rpx">{{cache.last_success || '尚未'}}</view></view>
+      <view class="stat"><view class="k">已缓存</view><view class="v">{{cache.cached || 0}}</view></view>
+      <view class="stat"><view class="k">偏多提醒</view><view class="v up">{{buyCount}}</view></view>
+      <view class="stat"><view class="k">偏空提醒</view><view class="v down">{{sellCount}}</view></view>
+    </view>
+  </view>
+
+  <!-- 大屏 / 提醒 分段，避免上下重复 -->
+  <view class="seg">
+    <view class="seg-item {{tab==='desk'?'on':''}}" data-tab="desk" bindtap="setTab">缓存大屏</view>
+    <view class="seg-item {{tab==='alerts'?'on':''}}" data-tab="alerts" bindtap="setTab">
+      买卖提醒
+      <text class="badge" wx:if="{{buyCount+sellCount}}">{{buyCount+sellCount}}</text>
+    </view>
+  </view>
+
+  <!-- ===== 大屏（对齐 Web desk） ===== -->
+  <block wx:if="{{tab==='desk'}}">
+    <view class="card">
+      <view class="section-title">查看方式</view>
+      <scroll-view scroll-x class="chip-scroll" enhanced show-scrollbar="{{false}}">
+        <view class="chip-line">
+          <view class="chip {{mode==='industry'?'on':''}}" data-mode="industry" bindtap="setMode">按行业</view>
+          <view class="chip {{mode==='concept'?'on':''}}" data-mode="concept" bindtap="setMode">按概念</view>
+          <view class="chip {{mode==='basic'?'on':''}}" data-mode="basic" bindtap="setMode">倾向/价位</view>
+        </view>
+      </scroll-view>
+
+      <view class="section-title">筛选</view>
+      <scroll-view scroll-x class="chip-scroll" enhanced show-scrollbar="{{false}}">
+        <view class="chip-line">
+          <view
+            class="chip {{cat===item.id?'on':''}}"
+            wx:for="{{cats}}"
+            wx:key="id"
+            data-cat="{{item.id}}"
+            bindtap="setCat"
+          >{{item.label}}</view>
+        </view>
+      </scroll-view>
+
+      <view class="hint" style="margin-bottom:12rpx">{{metaText}}</view>
+
+      <!-- 行业/概念：单一下拉，同一区域切换，不重复堆叠 -->
+      <block wx:if="{{useGroups}}">
+        <view class="field" wx:if="{{groupNames.length}}">
+          <text class="label">{{mode==='concept'?'概念':'行业'}}（同区域切换）</text>
+          <picker mode="selector" range="{{groupLabels}}" value="{{groupIndex}}" bindchange="onGroupPick">
+            <view class="picker">{{groupLabels[groupIndex] || '暂无分组'}}</view>
+          </picker>
+        </view>
+        <view wx:if="{{!cards.length}}" class="empty">当前筛选下没有股票。可点「刷新行业/概念」或换筛选。</view>
+        <view class="stock-grid">
+          <view
+            class="stock-card {{item.limit_up?'limit-up':''}}"
+            wx:for="{{cards}}"
+            wx:key="symbol"
+            data-symbol="{{item.symbol}}"
+            bindtap="openQuote"
+          >
+            <view class="row">
+              <view class="grow">
+                <view class="code">{{item.symbol}}</view>
+                <view class="name">{{item.name}}</view>
+              </view>
+              <view catchtap="toggleWatch" data-symbol="{{item.symbol}}" class="chip {{item.watched?'on':''}}" style="margin:0;padding:6rpx 12rpx">{{item.watched?'★':'☆'}}</view>
+            </view>
+            <view style="margin-top:8rpx">
+              <view class="px {{item.pctClass}}">{{item.close}}</view>
+              <view class="chg {{item.pctClass}}">{{item.pctText}}</view>
+            </view>
+            <view class="tags">
+              <text class="tag {{tag.cls}}" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="t">{{tag.t}}</text>
+            </view>
+          </view>
+        </view>
+        <button class="btn" style="margin-top:16rpx;width:100%" wx:if="{{deskMore}}" bindtap="loadMore">加载更多（还剩 {{remain}}）</button>
+      </block>
+
+      <!-- 倾向/价位：平铺卡片 -->
+      <block wx:else>
+        <view wx:if="{{!cards.length}}" class="empty">当前筛选下没有股票</view>
+        <view class="stock-grid">
+          <view
+            class="stock-card {{item.limit_up?'limit-up':''}}"
+            wx:for="{{cards}}"
+            wx:key="symbol"
+            data-symbol="{{item.symbol}}"
+            bindtap="openQuote"
+          >
+            <view class="row">
+              <view class="grow">
+                <view class="code">{{item.symbol}}</view>
+                <view class="name">{{item.name}}</view>
+              </view>
+              <view catchtap="toggleWatch" data-symbol="{{item.symbol}}" class="chip {{item.watched?'on':''}}" style="margin:0;padding:6rpx 12rpx">{{item.watched?'★':'☆'}}</view>
+            </view>
+            <view style="margin-top:8rpx">
+              <view class="px {{item.pctClass}}">{{item.close}}</view>
+              <view class="chg {{item.pctClass}}">{{item.pctText}}</view>
+            </view>
+            <view class="tags">
+              <text class="tag {{tag.cls}}" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="t">{{tag.t}}</text>
+            </view>
+          </view>
+        </view>
+        <button class="btn" style="margin-top:16rpx;width:100%" wx:if="{{deskMore}}" bindtap="loadMore">加载更多（还剩 {{remain}}）</button>
+      </block>
+    </view>
+
+    <view class="toolbar">
+      <button class="btn" loading="{{busy}}" bindtap="onRefreshSectors">刷新行业/概念</button>
+      <view class="hint grow" style="font-size:20rpx">{{sectorsStatus}}</view>
+    </view>
+  </block>
+
+  <!-- ===== 提醒（单独页签，不再和大屏叠在一起） ===== -->
+  <block wx:if="{{tab==='alerts'}}">
+    <view class="seg" style="margin-top:0">
+      <view class="seg-item {{alertSide==='buy'?'on':''}}" data-side="buy" bindtap="setAlertSide">偏多 {{buyCount}}</view>
+      <view class="seg-item {{alertSide==='sell'?'on':''}}" data-side="sell" bindtap="setAlertSide">偏空 {{sellCount}}</view>
+    </view>
+    <view class="card">
+      <view class="hint" style="margin-bottom:12rpx">来自最近交易日买卖点扫描，点卡片打开行情。</view>
+      <view wx:if="{{!alertList.length}}" class="empty">暂无提醒</view>
+      <view
+        class="list-item"
+        wx:for="{{alertList}}"
+        wx:key="symbol"
+        data-symbol="{{item.symbol}}"
+        bindtap="openQuote"
+      >
+        <view class="grow">
+          <view>{{item.name}} <text class="muted">{{item.symbol}}</text></view>
+          <view class="hint">{{item.regime}} · {{item.as_of}}</view>
+          <view class="hint" wx:if="{{item.reasonText}}">{{item.reasonText}}</view>
+        </view>
+        <view class="{{alertSide==='buy'?'up':'down'}}" style="text-align:right">
+          <view>{{item.close}}</view>
+          <view style="font-size:22rpx">{{item.score}}</view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

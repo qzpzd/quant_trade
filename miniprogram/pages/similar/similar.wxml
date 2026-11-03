@@ -1,0 +1,110 @@
+<view class="page">
+  <symbol-bar bind:change="onSymbolChange" />
+
+  <view class="busy-bar" wx:if="{{busyShow}}">
+    <view class="busy-bar-row">
+      <text class="busy-bar-text">{{busyText}}</text>
+      <text class="busy-bar-pct">{{busyPctText}}</text>
+    </view>
+    <view class="busy-track"><view class="busy-fill" style="width:{{busyPct}}%"></view></view>
+  </view>
+
+  <view class="card">
+    <view class="toolbar" style="margin-bottom:12rpx">
+      <button class="btn {{boxMode?'primary':''}}" bindtap="toggleBox">{{boxMode ? '画框中…' : '框选 K 线'}}</button>
+      <button class="btn" bindtap="clearBox" wx:if="{{hasBox}}">清除框</button>
+      <button class="btn" loading="{{busy}}" bindtap="onSync">缓存样本池</button>
+    </view>
+
+    <view class="section-title">形态 K 线 · {{boxHint}}</view>
+    <view
+      class="chart-box"
+      catchtouchstart="onTouchStart"
+      catchtouchmove="onTouchMove"
+      catchtouchend="onTouchEnd"
+    >
+      <canvas type="2d" id="simk" class="chart-canvas"></canvas>
+    </view>
+    <view class="hint" style="margin-top:8rpx">
+      左右滑动 K 线，底部显示触点当日指标；点「框选 K 线」后拖出形态区间。
+    </view>
+
+    <view class="row" style="margin-top:12rpx;gap:10rpx">
+      <view class="field grow" style="margin:0">
+        <text class="label">形态起点</text>
+        <picker mode="date" value="{{simStart}}" bindchange="onSimStart">
+          <view class="picker">{{simStart || '点此或框选'}}</view>
+        </picker>
+      </view>
+      <view class="field grow" style="margin:0">
+        <text class="label">形态终点</text>
+        <picker mode="date" value="{{simEnd}}" bindchange="onSimEnd">
+          <view class="picker">{{simEnd || '点此或框选'}}</view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="row" style="margin-top:12rpx;gap:10rpx">
+      <view class="field grow" style="margin:0">
+        <text class="label">样本池</text>
+        <picker mode="selector" range="{{univLabels}}" value="{{univIndex}}" bindchange="onUniv">
+          <view class="picker">{{univLabels[univIndex]}}</view>
+        </picker>
+      </view>
+      <view class="field grow" style="margin:0">
+        <text class="label">回看</text>
+        <picker mode="selector" range="{{lookLabels}}" value="{{lookIndex}}" bindchange="onLook">
+          <view class="picker">{{lookLabels[lookIndex]}}</view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="field" style="margin-top:12rpx">
+      <text class="label">已保存形态（下拉选用）</text>
+      <picker mode="selector" range="{{patternLabels}}" value="{{patternIndex}}" bindchange="onPickPattern">
+        <view class="picker">{{patternLabels[patternIndex]}}</view>
+      </picker>
+    </view>
+
+    <view class="section-title" style="margin-top:16rpx">保存当前形态</view>
+    <view class="row" style="gap:10rpx">
+      <view class="field grow" style="margin:0">
+        <input class="input" value="{{saveName}}" bindinput="onSaveName" placeholder="例如 冲高回落" />
+      </view>
+      <button class="btn" loading="{{busy}}" bindtap="onSavePattern">保存形态</button>
+    </view>
+    <view class="chip {{includeCurrent?'on':''}}" style="margin-top:12rpx" bindtap="toggleInclude">
+      {{includeCurrent ? '✓ 同时用当前区间' : '同时用当前区间'}}
+    </view>
+
+    <view class="toolbar" style="margin-top:14rpx;margin-bottom:0">
+      <button class="btn primary" loading="{{busy}}" bindtap="onRun">寻找相似走势</button>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{patterns.length}}">
+    <view class="section-title">已保存形态列表</view>
+    <view class="list-item" wx:for="{{patterns}}" wx:key="id">
+      <view class="grow" data-id="{{item.id}}" bindtap="selectPatternRow">
+        <view>{{item.name}}</view>
+        <view class="hint">{{item.symbol}} · {{item.start}} ~ {{item.end}}</view>
+      </view>
+      <button class="btn" size="mini" data-id="{{item.id}}" catchtap="delPattern">删</button>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{picks.length}}">
+    <view class="section-title">相似结果 {{picks.length}}</view>
+    <view class="list-item" wx:for="{{picks}}" wx:key="index" data-symbol="{{item.symbol}}" bindtap="openQuote">
+      <view class="grow">
+        <view>{{item.name || item.symbol}} <text class="muted">{{item.symbol}}</text></view>
+        <view class="hint">{{item.start}} ~ {{item.end}} · 相关 {{item.corrText}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{study}}">
+    <view class="section-title">后续统计</view>
+    <view class="hint">{{study}}</view>
+  </view>
+</view>

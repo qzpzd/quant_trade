@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+.venv-mac-bak/
+data_cache/
+.DS_Store
+*.egg-info/
+.pytest_cache/
+dist/
+_pack_desktop_work/
+_pack_work/
+phase_ma_study/_pack_work/

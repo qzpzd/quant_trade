@@ -1,0 +1,54 @@
+<view class="page">
+  <symbol-bar bind:change="run" />
+
+  <view class="busy-bar" wx:if="{{busyShow}}">
+    <view class="busy-bar-row">
+      <text class="busy-bar-text">{{busyText}}</text>
+      <text class="busy-bar-pct">{{busyPctText}}</text>
+    </view>
+    <view class="busy-track"><view class="busy-fill" style="width:{{busyPct}}%"></view></view>
+  </view>
+
+  <view class="toolbar">
+    <button class="btn primary" loading="{{busy}}" bindtap="run">分析买卖点</button>
+  </view>
+
+  <view class="card" wx:if="{{head}}">
+    <view class="section-title">{{head.name}} {{head.symbol}}</view>
+    <view class="stats">
+      <view class="stat"><view class="k">倾向</view><view class="v">{{head.stance}}</view></view>
+      <view class="stat"><view class="k">状态</view><view class="v">{{head.regime}}</view></view>
+      <view class="stat"><view class="k">分数</view><view class="v">{{head.score}}</view></view>
+      <view class="stat"><view class="k">信号数</view><view class="v">{{head.signal_count}}</view></view>
+    </view>
+    <view class="hint" style="margin-top:12rpx">{{head.regime_reason}}</view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">K 线</view>
+    <view class="chart-box">
+      <canvas type="2d" id="sigchart" class="chart-canvas"></canvas>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">最近理由</view>
+    <view wx:if="{{!reasons.length}}" class="empty">点上方按钮分析</view>
+    <view class="list-item" wx:for="{{reasons}}" wx:key="index">
+      <view class="grow">
+        <view>{{item.source}} · {{item.reason}}</view>
+        <view class="hint">{{item.date || ''}} {{item.action || ''}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{signals.length}}">
+    <view class="section-title">信号列表</view>
+    <view class="list-item" wx:for="{{signals}}" wx:key="index">
+      <view class="grow">
+        <view class="{{item.action==='buy'?'up':'down'}}">{{item.action}} · {{item.source}}</view>
+        <view class="hint">{{item.date}} · {{item.reason}}</view>
+      </view>
+    </view>
+  </view>
+</view>

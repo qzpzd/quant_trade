@@ -1,0 +1,117 @@
+.bar {
+  position: relative;
+  background: #161910;
+  border: 1rpx solid #2c3224;
+  border-radius: 12rpx;
+  padding: 12rpx;
+  margin-bottom: 14rpx;
+  z-index: 20;
+  overflow: visible;
+}
+.search-wrap {
+  position: relative;
+  overflow: visible;
+  margin-bottom: 10rpx;
+}
+.inp {
+  background: #10130e;
+  border: 1rpx solid #2c3224;
+  border-radius: 8rpx;
+  padding: 14rpx 16rpx;
+  color: #efe7d6;
+  font-size: 26rpx;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 68rpx;
+  line-height: 1.35;
+}
+.dates {
+  display: flex;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch;
+  gap: 8rpx;
+  width: 100%;
+}
+.date-cell {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center;
+  background: #10130e;
+  border: 1rpx solid #2c3224;
+  border-radius: 8rpx;
+  padding: 0 10rpx;
+  height: 64rpx;
+  box-sizing: border-box;
+}
+.dl {
+  flex: none;
+  color: #8b8473;
+  font-size: 22rpx;
+  margin-right: 8rpx;
+  white-space: nowrap;
+}
+.date-cell picker {
+  flex: 1;
+  min-width: 0;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+}
+.date-val {
+  color: #efe7d6;
+  font-size: 22rpx;
+  white-space: nowrap !important;
+  word-break: keep-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 64rpx;
+  height: 64rpx;
+  writing-mode: horizontal-tb;
+}
+.go {
+  flex: none !important;
+  width: 110rpx !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 64rpx !important;
+  line-height: 64rpx !important;
+  background: #e6ff4a !important;
+  color: #111 !important;
+  font-weight: 700;
+  font-size: 24rpx !important;
+  border-radius: 8rpx;
+}
+.go::after {
+  border: none;
+}
+.suggest {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4rpx);
+  z-index: 50;
+  background: #10130e;
+  border: 1rpx solid #2c3224;
+  border-radius: 8rpx;
+  max-height: 400rpx;
+  overflow-y: auto;
+}
+.si {
+  display: flex;
+  gap: 12rpx;
+  align-items: center;
+  padding: 16rpx;
+  border-bottom: 1rpx solid #2c3224;
+  font-size: 24rpx;
+}
+.si:last-child {
+  border-bottom: none;
+}
+.m {
+  color: #8b8473;
+  flex: 1;
+}

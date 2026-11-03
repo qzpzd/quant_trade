@@ -1,0 +1,42 @@
+<view class="page">
+  <view class="toolbar">
+    <button class="btn" bindtap="prevMonth">‹ 上月</button>
+    <button class="btn" bindtap="thisMonth">本月</button>
+    <button class="btn" bindtap="nextMonth">下月 ›</button>
+  </view>
+  <view class="section-title">{{title}}</view>
+
+  <view class="card" wx:if="{{monthThemes.length}}">
+    <view class="section-title">本月题材</view>
+    <view class="hint" wx:for="{{monthThemes}}" wx:key="index">· {{item}}</view>
+  </view>
+
+  <view class="card">
+    <view class="cal-week">
+      <text wx:for="{{weeks}}" wx:key="*this">{{item}}</text>
+    </view>
+    <view class="cal-grid">
+      <view
+        class="cal-day {{item.empty ? 'empty-day' : ''}} {{item.date === selected ? 'on' : ''}}"
+        wx:for="{{days}}"
+        wx:key="key"
+        data-date="{{item.date}}"
+        bindtap="selectDay"
+      >
+        <view>{{item.label}}</view>
+        <view class="dot" wx:if="{{item.hasEvent}}"></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">{{selected || '选择日期'}}</view>
+    <view wx:if="{{!detailItems.length}}" class="hint">{{detailHint}}</view>
+    <view class="list-item" wx:for="{{detailItems}}" wx:key="index">
+      <view class="grow">
+        <view>{{item.title || item.text || item.name}}</view>
+        <view class="hint">{{item.source || item.category || ''}} {{item.time || ''}}</view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,28 @@
+<view class="page">
+  <view class="hint" style="margin-bottom:16rpx">与 Web 端共用自选。点卡片看行情，☆ 可取消。</view>
+  <view wx:if="{{!cards.length}}" class="empty">还没有自选。在首页大屏或行情页点☆加入。</view>
+  <view class="stock-grid" wx:else>
+    <view
+      class="stock-card {{item.limit_up?'limit-up':''}}"
+      wx:for="{{cards}}"
+      wx:key="symbol"
+      data-symbol="{{item.symbol}}"
+      bindtap="openQuote"
+    >
+      <view class="row">
+        <view class="grow">
+          <view class="code">{{item.symbol}}</view>
+          <view class="name">{{item.name}}</view>
+        </view>
+        <view catchtap="onRemove" data-symbol="{{item.symbol}}" class="chip on" style="margin:0;padding:6rpx 12rpx">★</view>
+      </view>
+      <view style="margin-top:8rpx" wx:if="{{item.close!=null}}">
+        <view class="px {{item.pctClass}}">{{item.close}}</view>
+        <view class="chg {{item.pctClass}}">{{item.pctText}}</view>
+      </view>
+      <view class="tags" wx:if="{{item.tags && item.tags.length}}">
+        <text class="tag {{tag.cls}}" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="t">{{tag.t}}</text>
+      </view>
+    </view>
+  </view>
+</view>

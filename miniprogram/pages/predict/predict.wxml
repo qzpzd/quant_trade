@@ -1,0 +1,85 @@
+<view class="page">
+  <symbol-bar bind:change="noop" />
+
+  <view class="busy-bar" wx:if="{{busyShow}}">
+    <view class="busy-bar-row">
+      <text class="busy-bar-text">{{busyText}}</text>
+      <text class="busy-bar-pct">{{busyPctText}}</text>
+    </view>
+    <view class="busy-track"><view class="busy-fill" style="width:{{busyPct}}%"></view></view>
+  </view>
+
+  <view class="card">
+    <view class="field">
+      <text class="label">预测标的来源</text>
+      <picker mode="selector" range="{{sourceLabels}}" value="{{sourceIndex}}" bindchange="onSource">
+        <view class="picker">{{sourceLabels[sourceIndex]}}</view>
+      </picker>
+    </view>
+    <view class="field" wx:if="{{showPattern}}">
+      <text class="label">已保存形态</text>
+      <picker mode="selector" range="{{patternLabels}}" value="{{patternIndex}}" bindchange="onPattern">
+        <view class="picker">{{patternLabels[patternIndex]}}</view>
+      </picker>
+    </view>
+    <view class="field" wx:if="{{showScreen}}">
+      <text class="label">已保存条件</text>
+      <picker mode="selector" range="{{screenLabels}}" value="{{screenIndex}}" bindchange="onScreen">
+        <view class="picker">{{screenLabels[screenIndex]}}</view>
+      </picker>
+    </view>
+    <view class="field" wx:if="{{showHits}}">
+      <text class="label">名单内股票</text>
+      <picker mode="selector" range="{{hitLabels}}" value="{{hitIndex}}" bindchange="onHit">
+        <view class="picker">{{hitLabels[hitIndex]}}</view>
+      </picker>
+    </view>
+    <view class="hint">可先在「条件选股 / 形态」页保存，再回到这里选用该股做走势预测。</view>
+
+    <view class="row" style="margin-top:12rpx">
+      <view class="field grow" style="margin:0">
+        <text class="label">回看天数</text>
+        <input class="input" type="number" value="{{lookback}}" bindinput="onLookback" />
+      </view>
+      <view class="field grow" style="margin:0">
+        <text class="label">预测天数</text>
+        <input class="input" type="number" value="{{horizon}}" bindinput="onHorizon" />
+      </view>
+    </view>
+    <view class="toolbar" style="margin-top:14rpx;margin-bottom:0">
+      <button class="btn primary" loading="{{busy}}" bindtap="onRun">生成预测</button>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{result}}">
+    <view class="section-title">{{result.name}} {{result.symbol}}</view>
+    <view class="stats">
+      <view class="stat"><view class="k">偏向</view><view class="v">{{result.bias}}</view></view>
+      <view class="stat"><view class="k">合成收益</view><view class="v {{retClass}}">{{retText}}</view></view>
+      <view class="stat"><view class="k">类比中位</view><view class="v">{{analogRet}}</view></view>
+      <view class="stat"><view class="k">相似样本</view><view class="v">{{result.n_analogs}}</view></view>
+    </view>
+    <view class="hint" style="margin-top:12rpx">{{result.disclaimer || ''}}</view>
+  </view>
+
+  <view class="card" wx:if="{{hasChart}}">
+    <view class="section-title">预测路径 · {{winText}}</view>
+    <view class="toolbar">
+      <button class="btn" bindtap="panLeft">←</button>
+      <button class="btn" bindtap="panRight">→</button>
+      <button class="btn" bindtap="zoomOut">缩小</button>
+      <button class="btn" bindtap="zoomIn">放大</button>
+    </view>
+    <view
+      class="chart-box tall"
+      catchtouchstart="onTouchStart"
+      catchtouchmove="onTouchMove"
+      catchtouchend="onTouchEnd"
+    >
+      <canvas type="2d" id="pred" class="chart-canvas"></canvas>
+    </view>
+    <view class="hint" style="margin-top:8rpx">
+      实线黄=合成；点线蓝=形态类比；虚线灰=趋势。左右滑动图表，底部显示触点指标。
+    </view>
+  </view>
+</view>

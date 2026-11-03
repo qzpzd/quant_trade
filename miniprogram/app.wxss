@@ -1,0 +1,464 @@
+page {
+  --bg: #0e100c;
+  --panel: #161910;
+  --panel-2: #1c2016;
+  --line: #2c3224;
+  --text: #efe7d6;
+  --muted: #8b8473;
+  --accent: #e6ff4a;
+  --up: #e4454a;
+  --down: #2ea574;
+  --chip: #1c2016;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 28rpx;
+  line-height: 1.45;
+  box-sizing: border-box;
+}
+
+.page {
+  padding: 24rpx 20rpx calc(24rpx + env(safe-area-inset-bottom));
+  min-height: 100vh;
+  box-sizing: border-box;
+  width: 100%;
+  overflow: visible;
+}
+
+.card {
+  background: var(--panel);
+  border: 1rpx solid var(--line);
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 16rpx;
+  box-sizing: border-box;
+}
+
+.section-title {
+  font-size: 24rpx;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  font-weight: 500;
+  margin: 0 0 14rpx;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 22rpx;
+  line-height: 1.5;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.grow {
+  flex: 1;
+  min-width: 0;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10rpx 18rpx;
+  border-radius: 8rpx;
+  background: var(--chip);
+  color: var(--text);
+  font-size: 24rpx;
+  border: 1rpx solid var(--line);
+  line-height: 1.2;
+  width: auto !important;
+  min-width: 0;
+  margin: 0 !important;
+  flex: none;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+/* 覆盖微信 button 默认样式，避免竖排占满一行 */
+button.btn {
+  display: inline-flex !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 10rpx 18rpx;
+  font-size: 24rpx;
+  line-height: 1.2;
+  background: var(--chip);
+  color: var(--text);
+  border: 1rpx solid var(--line);
+  border-radius: 8rpx;
+}
+
+button.btn::after {
+  border: none;
+}
+
+.btn.primary,
+button.btn.primary {
+  background: var(--accent) !important;
+  color: #111 !important;
+  border-color: var(--accent) !important;
+  font-weight: 600;
+}
+
+.btn.ghost,
+button.btn.ghost {
+  background: transparent !important;
+}
+
+.btn[disabled] {
+  opacity: 0.45;
+}
+
+.toolbar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 10rpx;
+  margin-bottom: 14rpx;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.toolbar .btn,
+.toolbar button.btn {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 12rpx 8rpx;
+  font-size: 22rpx;
+  white-space: nowrap;
+}
+
+.input,
+.picker {
+  background: #10130e;
+  border: 1rpx solid var(--line);
+  border-radius: 8rpx;
+  padding: 16rpx 16rpx;
+  color: var(--text);
+  font-size: 26rpx;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 72rpx;
+  line-height: 1.4;
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+
+.stat {
+  background: var(--chip);
+  border-radius: 8rpx;
+  padding: 12rpx 14rpx;
+  min-width: 28%;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+.stat .k {
+  color: var(--muted);
+  font-size: 20rpx;
+}
+
+.stat .v {
+  margin-top: 4rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.up { color: var(--up); }
+.down { color: var(--down); }
+.muted { color: var(--muted); }
+
+.list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18rpx 0;
+  border-bottom: 1rpx solid var(--line);
+  gap: 12rpx;
+}
+
+.list-item:last-child {
+  border-bottom: none;
+}
+
+.chip-scroll {
+  white-space: nowrap;
+  margin: 0 -4rpx 12rpx;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+
+.chip {
+  display: inline-block;
+  padding: 10rpx 18rpx;
+  border-radius: 6rpx;
+  background: var(--chip);
+  border: 1rpx solid var(--line);
+  color: var(--muted);
+  font-size: 22rpx;
+  margin-right: 8rpx;
+}
+
+.chip.on {
+  color: #111;
+  background: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 48rpx 20rpx;
+  font-size: 24rpx;
+}
+
+.chart-box {
+  width: 100%;
+  height: 360rpx;
+  background: #10130e;
+  border-radius: 8rpx;
+  overflow: hidden;
+  position: relative;
+}
+
+.chart-tip {
+  position: absolute;
+  left: 12rpx;
+  top: 12rpx;
+  z-index: 2;
+  background: rgba(16, 19, 14, 0.88);
+  border: 1rpx solid var(--line);
+  border-radius: 8rpx;
+  padding: 10rpx 14rpx;
+  max-width: 70%;
+  pointer-events: none;
+}
+
+.chart-tip .tip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20rpx;
+  font-size: 20rpx;
+  line-height: 1.55;
+}
+
+.chart-tip .tip-k {
+  color: var(--muted);
+}
+
+.chart-tip .tip-v {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 对齐 Web #busy 进度条 */
+.busy-bar {
+  margin-bottom: 16rpx;
+  padding: 14rpx 16rpx;
+  border: 1rpx dashed var(--line);
+  border-radius: 8rpx;
+  background: rgba(22, 25, 16, 0.92);
+  color: var(--accent);
+  font-size: 22rpx;
+}
+
+.busy-bar-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16rpx;
+  margin-bottom: 10rpx;
+}
+
+.busy-bar-text {
+  flex: 1;
+  min-width: 0;
+  color: var(--accent);
+  line-height: 1.4;
+}
+
+.busy-bar-pct {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.busy-track {
+  height: 10rpx;
+  background: #2c3224;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.busy-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 6rpx;
+  transition: width 0.2s ease;
+}
+
+.field {
+  margin-bottom: 14rpx;
+}
+
+.field .label {
+  display: block;
+  color: var(--muted);
+  font-size: 20rpx;
+  margin-bottom: 6rpx;
+}
+
+.badge {
+  display: inline-block;
+  min-width: 28rpx;
+  padding: 0 8rpx;
+  border-radius: 999rpx;
+  background: var(--up);
+  color: #fff;
+  font-size: 18rpx;
+  text-align: center;
+  margin-left: 6rpx;
+  line-height: 1.4;
+}
+
+/* 股票卡片 — 对齐 Web stock-card */
+.stock-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12rpx;
+}
+
+.stock-card {
+  background: var(--panel-2);
+  border: 1rpx solid var(--line);
+  border-radius: 10rpx;
+  padding: 14rpx;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.stock-card.limit-up {
+  border-color: rgba(228, 69, 74, 0.55);
+}
+
+.stock-card .code {
+  font-size: 22rpx;
+  color: var(--muted);
+  font-family: ui-monospace, monospace;
+}
+
+.stock-card .name {
+  font-size: 26rpx;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stock-card .px {
+  font-size: 30rpx;
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+}
+
+.stock-card .chg {
+  font-size: 22rpx;
+}
+
+.stock-card .tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6rpx;
+  margin-top: 10rpx;
+}
+
+.tag {
+  font-size: 18rpx;
+  padding: 2rpx 8rpx;
+  border-radius: 4rpx;
+  background: #12150e;
+  color: var(--muted);
+  border: 1rpx solid var(--line);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tag.buy { color: var(--up); border-color: rgba(228, 69, 74, 0.4); }
+.tag.sell { color: var(--down); border-color: rgba(46, 165, 116, 0.4); }
+.tag.limit { color: #fff; background: var(--up); border-color: var(--up); }
+
+.seg {
+  display: flex;
+  background: #10130e;
+  border: 1rpx solid var(--line);
+  border-radius: 10rpx;
+  overflow: hidden;
+  margin-bottom: 16rpx;
+}
+
+.seg-item {
+  flex: 1;
+  text-align: center;
+  padding: 18rpx 8rpx;
+  color: var(--muted);
+  font-size: 26rpx;
+}
+
+.seg-item.on {
+  background: var(--accent);
+  color: #111;
+  font-weight: 700;
+}
+
+.warn {
+  border-color: rgba(228, 69, 74, 0.6);
+}
+
+.search-wrap {
+  position: relative;
+  margin-bottom: 16rpx;
+  margin-top: 4rpx;
+  overflow: visible;
+  z-index: 30;
+}
+
+.suggest {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4rpx);
+  z-index: 40;
+  background: #10130e;
+  border: 1rpx solid var(--line);
+  border-radius: 8rpx;
+  max-height: 420rpx;
+  overflow-y: auto;
+  box-shadow: 0 12rpx 40rpx rgba(0, 0, 0, 0.45);
+}
+
+.suggest-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12rpx;
+  padding: 18rpx 16rpx;
+  border-bottom: 1rpx solid var(--line);
+  font-size: 24rpx;
+}
+
+.suggest-item:last-child {
+  border-bottom: none;
+}

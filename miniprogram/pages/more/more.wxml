@@ -1,0 +1,56 @@
+<view class="page">
+  <view class="card">
+    <view class="section-title">形迹 · 更多工具</view>
+    <view class="hint">底部已有「首页 / 自选 / 行情 / 选股」。此处仅放未进 Tab 的研究模块。</view>
+  </view>
+
+  <view class="card warn" wx:if="{{needLan}}">
+    <view class="section-title">⚠ 真机请先配置 API</view>
+    <view class="hint">当前 {{baseUrl}}</view>
+    <button class="btn primary" bindtap="go" data-url="/pages/settings/settings">连接设置</button>
+  </view>
+
+  <view class="card">
+    <view class="section-title">研究模块</view>
+    <view class="list-item" bindtap="go" data-url="/pages/backtest/backtest">
+      <view class="grow"><view>回测</view><view class="hint">多策略对比收益 / 回撤 / 夏普</view></view>
+      <text class="muted">›</text>
+    </view>
+    <view class="list-item" bindtap="go" data-url="/pages/predict/predict">
+      <view class="grow"><view>走势预测</view><view class="hint">相似窗口路径合成</view></view>
+      <text class="muted">›</text>
+    </view>
+    <view class="list-item" bindtap="go" data-url="/pages/similar/similar">
+      <view class="grow"><view>形态匹配</view><view class="hint">K 线画框 → 样本池找相似</view></view>
+      <text class="muted">›</text>
+    </view>
+    <view class="list-item" bindtap="go" data-url="/pages/auction/auction">
+      <view class="grow"><view>竞价分析</view><view class="hint">早盘 / 尾盘集合竞价</view></view>
+      <text class="muted">›</text>
+    </view>
+    <view class="list-item" bindtap="go" data-url="/pages/calendar/calendar">
+      <view class="grow"><view>题材日历</view><view class="hint">月份题材与事件</view></view>
+      <text class="muted">›</text>
+    </view>
+    <view class="list-item" bindtap="go" data-url="/pages/settings/settings">
+      <view class="grow"><view>连接设置</view><view class="hint">API 地址（真机必填局域网 IP）</view></view>
+      <text class="muted">›</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">入口说明</view>
+    <view class="hint">买卖点：在「行情」页点「买卖点」</view>
+    <view class="hint">条件选股：底部 Tab「选股」</view>
+    <view class="hint">自选 / 大屏：底部「自选」「首页」</view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">健康检查</view>
+    <view class="hint">{{baseUrl}}</view>
+    <view class="toolbar" style="margin-top:12rpx;margin-bottom:0">
+      <button class="btn primary" loading="{{busy}}" bindtap="ping">测试连接</button>
+    </view>
+    <view class="hint" style="margin-top:12rpx" wx:if="{{health}}">{{health}}</view>
+  </view>
+</view>

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "竞价分析",
+  "usingComponents": {
+    "symbol-bar": "/components/symbol-bar/symbol-bar"
+  }
+}

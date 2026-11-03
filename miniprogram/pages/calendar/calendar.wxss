@@ -1,0 +1,43 @@
+.cal-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  color: #8a8576;
+  font-size: 22rpx;
+  margin-bottom: 8rpx;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8rpx;
+}
+.cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12rpx;
+  background: #12150e;
+  font-size: 24rpx;
+  position: relative;
+}
+.cal-day.on {
+  background: #e8c958;
+  color: #1a1608;
+  font-weight: 600;
+}
+.cal-day.empty-day {
+  background: transparent;
+  opacity: 0.3;
+}
+.dot {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: #e85d4c;
+  margin-top: 4rpx;
+}
+.cal-day.on .dot {
+  background: #1a1608;
+}

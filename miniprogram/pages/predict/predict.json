@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "走势预测",
+  "usingComponents": {
+    "symbol-bar": "/components/symbol-bar/symbol-bar"
+  }
+}

@@ -1,0 +1,88 @@
+<view class="page">
+  <view class="busy-bar" wx:if="{{busyShow}}">
+    <view class="busy-bar-row">
+      <text class="busy-bar-text">{{busyText}}</text>
+      <text class="busy-bar-pct">{{busyPctText}}</text>
+    </view>
+    <view class="busy-track"><view class="busy-fill" style="width:{{busyPct}}%"></view></view>
+  </view>
+
+  <view class="card">
+    <view class="field">
+      <text class="label">已保存条件（下拉选用并直接选股）</text>
+      <picker mode="selector" range="{{savedLabels}}" value="{{savedIndex}}" bindchange="onPickSaved">
+        <view class="picker">{{savedLabels[savedIndex]}}</view>
+      </picker>
+    </view>
+
+    <view class="field">
+      <text class="label">样本池</text>
+      <picker mode="selector" range="{{univLabels}}" value="{{univIndex}}" bindchange="onUniv">
+        <view class="picker">{{univLabels[univIndex]}}</view>
+      </picker>
+    </view>
+
+    <view class="section-title">快捷预设</view>
+    <view class="chip-row">
+      <view class="chip {{preset===item.id?'on':''}}" wx:for="{{presets}}" wx:key="id" data-id="{{item.id}}" bindtap="pickPreset">{{item.name}}</view>
+    </view>
+
+    <view class="section-title" style="margin-top:20rpx">条件列表</view>
+    <view class="cond" wx:for="{{conds}}" wx:key="index">
+      <picker mode="selector" range="{{fieldLabels}}" value="{{item.fieldIndex}}" data-i="{{index}}" bindchange="onField">
+        <view class="picker mini">{{fieldLabels[item.fieldIndex]}}</view>
+      </picker>
+      <picker mode="selector" range="{{ops}}" value="{{item.opIndex}}" data-i="{{index}}" bindchange="onOp">
+        <view class="picker mini">{{ops[item.opIndex]}}</view>
+      </picker>
+      <input class="input mini" value="{{item.value}}" data-i="{{index}}" bindinput="onVal" placeholder="值" />
+      <button class="btn" size="mini" data-i="{{index}}" bindtap="rmCond">删</button>
+    </view>
+    <view class="toolbar">
+      <button class="btn" bindtap="addCond">加条件</button>
+      <button class="btn primary" loading="{{busy}}" bindtap="onRun">选股</button>
+      <button class="btn" loading="{{busy}}" bindtap="onSync">缓存</button>
+    </view>
+
+    <view class="section-title" style="margin-top:20rpx">保存当前条件</view>
+    <view class="row" style="gap:10rpx">
+      <view class="field grow" style="margin:0">
+        <text class="label">名称</text>
+        <input class="input" value="{{saveName}}" bindinput="onSaveName" placeholder="例如 RSI超卖" />
+      </view>
+      <view class="field" style="margin:0;min-width:200rpx">
+        <text class="label">类型</text>
+        <picker mode="selector" range="{{modeLabels}}" value="{{modeIndex}}" bindchange="onMode">
+          <view class="picker">{{modeLabels[modeIndex]}}</view>
+        </picker>
+      </view>
+    </view>
+    <view class="toolbar" style="margin-top:12rpx;margin-bottom:0">
+      <button class="btn" loading="{{busy}}" bindtap="onSave">保存条件</button>
+    </view>
+    <view class="hint" style="margin-top:10rpx">动态：下次按最新行情重跑；静态：冻结当前命中名单。枚举示例 macd_cross=golden。</view>
+  </view>
+
+  <view class="card" wx:if="{{saved.length}}">
+    <view class="section-title">已保存列表</view>
+    <view class="list-item" wx:for="{{saved}}" wx:key="id">
+      <view class="grow" data-id="{{item.id}}" bindtap="loadSaved">
+        <view>{{item.name}}</view>
+        <view class="hint">{{item.mode === 'static' ? '静态' : '动态'}} · {{item.universe}}</view>
+      </view>
+      <button class="btn" size="mini" data-id="{{item.id}}" catchtap="delSaved">删</button>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">结果 {{hits.length ? '('+hits.length+')' : ''}}</view>
+    <view wx:if="{{!hits.length}}" class="empty">{{hint}}</view>
+    <view class="list-item" wx:for="{{hits}}" wx:key="symbol" data-symbol="{{item.symbol}}" bindtap="openQuote">
+      <view class="grow">
+        <view>{{item.name}} <text class="muted">{{item.symbol}}</text></view>
+        <view class="hint">RSI {{item.rsi14 || '—'}} · 量比 {{item.vol_ratio || '—'}} · PE {{item.pe || '—'}}</view>
+      </view>
+      <view class="{{item.pctClass}}">{{item.close}} {{item.pctText}}</view>
+    </view>
+  </view>
+</view>

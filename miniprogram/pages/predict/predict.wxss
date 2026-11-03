@@ -1,0 +1,3 @@
+.chart-canvas { width: 100%; height: 100%; }
+.chart-box { touch-action: none; height: 420rpx; }
+.chart-box.tall { height: 520rpx; }

@@ -1,0 +1,76 @@
+<view class="page">
+  <symbol-bar bind:change="noop" />
+
+  <view class="busy-bar" wx:if="{{busyShow}}">
+    <view class="busy-bar-row">
+      <text class="busy-bar-text">{{busyText}}</text>
+      <text class="busy-bar-pct">{{busyPctText}}</text>
+    </view>
+    <view class="busy-track"><view class="busy-fill" style="width:{{busyPct}}%"></view></view>
+  </view>
+
+  <view class="card">
+    <view class="field">
+      <text class="label">资金（元）</text>
+      <input class="input" type="digit" value="{{cash}}" bindinput="onCash" />
+    </view>
+    <view class="field">
+      <text class="label">回测来源</text>
+      <picker mode="selector" range="{{sourceLabels}}" value="{{sourceIndex}}" bindchange="onSource">
+        <view class="picker">{{sourceLabels[sourceIndex]}}</view>
+      </picker>
+    </view>
+    <view class="field" wx:if="{{showPattern}}">
+      <text class="label">已保存形态</text>
+      <picker mode="selector" range="{{patternLabels}}" value="{{patternIndex}}" bindchange="onPattern">
+        <view class="picker">{{patternLabels[patternIndex]}}</view>
+      </picker>
+    </view>
+    <view class="field" wx:if="{{showScreen}}">
+      <text class="label">已保存条件/名单</text>
+      <picker mode="selector" range="{{screenLabels}}" value="{{screenIndex}}" bindchange="onScreen">
+        <view class="picker">{{screenLabels[screenIndex]}}</view>
+      </picker>
+    </view>
+    <view class="hint">形态：对该模板股票按顶栏日期回测；条件：按名单内股票批量回测（最多 8 只）。请先在对应页保存。</view>
+
+    <view class="field">
+      <text class="label">策略（可多选）</text>
+      <view class="chip-row">
+        <view class="chip {{item.on?'on':''}}" wx:for="{{strategies}}" wx:key="id" data-id="{{item.id}}" bindtap="toggleStrategy">{{item.name}}</view>
+      </view>
+    </view>
+    <view class="toolbar" style="margin-bottom:0">
+      <button class="btn primary" loading="{{busy}}" bindtap="onRun">运行回测</button>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{stats.length}}">
+    <view class="section-title">结果摘要</view>
+    <view class="list-item" wx:for="{{stats}}" wx:key="index">
+      <view class="grow">
+        <view>{{item.label}}</view>
+        <view class="hint">收益 {{item.ret}} · 回撤 {{item.dd}} · 夏普 {{item.sharpe}} · 胜率 {{item.win}} · 期末 {{item.final}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{hasChart}}">
+    <view class="section-title">权益曲线 · {{winText}}</view>
+    <view class="toolbar">
+      <button class="btn" bindtap="zoomOut">缩小</button>
+      <button class="btn" bindtap="zoomIn">放大</button>
+    </view>
+    <view
+      class="chart-box tall"
+      catchtouchstart="onTouchStart"
+      catchtouchmove="onTouchMove"
+      catchtouchend="onTouchEnd"
+    >
+      <canvas type="2d" id="equity" class="chart-canvas"></canvas>
+    </view>
+    <view class="hint" style="margin-top:8rpx">
+      权益曲线 = 账户总净值（现金+持仓市值，单位：元）。右侧刻度为元/万/亿；用于看策略资金随时间涨跌与回撤。
+    </view>
+  </view>
+</view>

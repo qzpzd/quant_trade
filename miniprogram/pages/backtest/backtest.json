@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "回测",
+  "usingComponents": {
+    "symbol-bar": "/components/symbol-bar/symbol-bar"
+  }
+}

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>形迹 · A股研究终端</title>
+  <link rel="stylesheet" href="/styles.css?v=33" />
+  <script src="/vendor/plotly.min.js"></script>
+</head>
+<body>
+  <aside class="rail">
+    <div class="brand">
+      <div class="brand-mark">形</div>
+      <div>
+        <div class="brand-name">形迹</div>
+        <div class="brand-sub">XINGJI DESK</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <button class="nav-item active" data-view="home">首页 <span id="alert-badge" class="badge hidden"></span></button>
+      <button class="nav-item" data-view="watch">自选 <span id="watch-badge" class="badge hidden"></span></button>
+      <button class="nav-item" data-view="calendar">题材日历</button>
+      <button class="nav-item" data-view="backtest">回测</button>
+      <button class="nav-item" data-view="signals">买卖点</button>
+      <button class="nav-item" data-view="predict">走势预测</button>
+      <button class="nav-item" data-view="similar">形态匹配</button>
+      <button class="nav-item" data-view="screen">条件选股</button>
+      <button class="nav-item" data-view="auction">竞价分析</button>
+    </nav>
+    <p class="rail-note">技术研究工具。历史回测与形态类比都不能保证未来收益，不构成投资建议。</p>
+  </aside>
+
+  <div class="workspace">
+    <header class="top">
+      <form id="symbol-form" class="symbol-form">
+        <label class="search-label">代码/名称
+          <div class="search-wrap">
+            <input id="symbol" value="002195" maxlength="32" placeholder="代码或名称，如 002195 / 二三四五" autocomplete="off" />
+            <div id="symbol-suggest" class="suggest hidden"></div>
+          </div>
+        </label>
+        <label>起始
+          <input id="start" type="date" value="2020-01-01" />
+        </label>
+        <label>结束
+          <input id="end" type="date" />
+        </label>
+        <button type="submit" class="btn">载入行情</button>
+      </form>
+      <div class="quote-wrap">
+        <div id="quote" class="quote"></div>
+        <span id="live-pill" class="live-pill off" title="准实时行情状态">准实时 · —</span>
+        <button type="button" class="btn star" id="hdr-watch" title="加入自选">☆ 自选</button>
+      </div>
+    </header>
+
+    <div id="banner" class="banner hidden"></div>
+    <div id="busy" class="busy hidden">
+      <div class="busy-row">
+        <span class="busy-text">正在计算…</span>
+        <span class="busy-pct" id="busy-pct"></span>
+      </div>
+      <div class="busy-track"><div class="busy-fill" id="busy-fill"></div></div>
+    </div>
+
+    <section class="view active" id="view-home">
+      <div class="toolbar">
+        <button class="btn primary" id="home-update">立即更新缓存</button>
+        <button class="btn" id="home-alerts">重扫提醒</button>
+        <span class="hint">盘中自选现价约 8 秒刷新；单股顶栏同步现价；分钟线约 60 秒。日线仍在交易日 16:30 或点「立即更新缓存」同步。</span>
+      </div>
+      <div id="home-cache" class="stats"></div>
+
+      <div class="desk">
+        <div class="desk-head">
+          <h2 class="section-title desk-title">缓存大屏</h2>
+          <div class="search-wrap grow">
+            <input id="desk-search" placeholder="搜索代码或名称，例如 601012 / 隆基" autocomplete="off" />
+            <div id="desk-suggest" class="suggest hidden"></div>
+          </div>
+        </div>
+        <p class="hint" id="desk-what">缓存大屏：把已缓存日线的股票做成可筛选研究墙——看涨跌、行业/概念分布、涨停与多空倾向；点卡片打开 K 线与提醒。不是交易下单盘。</p>
+        <div class="toolbar" style="margin:0 0 10px;padding:0;border:0">
+          <button class="btn" id="sectors-refresh">刷新行业/概念分类</button>
+          <span class="hint" id="sectors-status">分类来自本地映射（申万三级 + 巨潮资料）</span>
+        </div>
+        <div id="desk-filter-modes" class="desk-modes"></div>
+        <div id="desk-filters" class="desk-filters"></div>
+        <div id="limit-up-panel" class="limit-up-panel"></div>
+        <div class="viz-row">
+          <div id="viz-board" class="chart mini"></div>
+          <div id="viz-stance" class="chart mini"></div>
+          <div id="viz-band" class="chart mini"></div>
+        </div>
+        <div id="viz-tree" class="chart tree"></div>
+        <div id="desk-cats" class="desk-cats"></div>
+        <div id="desk-meta" class="hint"></div>
+        <div id="desk-groups" class="desk-groups"></div>
+        <div id="desk-grid" class="stock-grid hidden"></div>
+        <div class="desk-more hidden">
+          <button class="btn" id="desk-more">加载更多</button>
+        </div>
+      </div>
+
+      <div class="alert-split">
+        <div>
+          <h2 class="section-title">偏多提醒</h2>
+          <div id="home-buys" class="alert-list"></div>
+        </div>
+        <div>
+          <h2 class="section-title">偏空提醒</h2>
+          <div id="home-sells" class="alert-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-watch">
+      <div class="toolbar">
+        <span class="hint">自选与首页、顶栏、K 线抽屉共用同一份列表。自选股出现买卖点时会弹窗提醒。</span>
+      </div>
+      <div id="watch-empty" class="alert-empty hidden">还没有自选。在大屏卡片或抽屉里点☆即可加入。</div>
+      <div id="watch-grid" class="stock-grid"></div>
+    </section>
+
+    <section class="view" id="view-calendar">
+      <div class="toolbar">
+        <button class="btn" id="cal-prev">‹ 上月</button>
+        <button class="btn" id="cal-today">本月</button>
+        <button class="btn" id="cal-next">下月 ›</button>
+        <span id="cal-title" class="section-title" style="margin:0">题材日历</span>
+        <span class="hint">内置月份题材、财报窗口与重大会议；有网络时尝试叠加当日财经快讯。仅供研究备忘。</span>
+      </div>
+      <div class="cal-layout">
+        <div>
+          <div id="cal-month-themes" class="cal-month-box"></div>
+          <div id="cal-grid" class="cal-grid"></div>
+        </div>
+        <aside id="cal-detail" class="cal-detail">
+          <p class="hint">点击某一天查看内置事件与（若有）外接资讯。</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="view" id="view-backtest">
+      <div class="toolbar">
+        <label>资金
+          <input id="bt-cash" type="number" value="100000" step="10000" />
+        </label>
+        <label>回测来源
+          <select id="bt-source">
+            <option value="symbol">当前股票</option>
+            <option value="pattern">已保存形态</option>
+            <option value="screen">已保存条件/名单</option>
+          </select>
+        </label>
+        <label id="bt-pattern-wrap" class="hidden">形态
+          <select id="bt-pattern"></select>
+        </label>
+        <label id="bt-screen-wrap" class="hidden">条件
+          <select id="bt-screen"></select>
+        </label>
+        <button class="btn primary" id="bt-run">运行回测</button>
+        <span class="hint">可多选策略做对比。形态：对该模板股票按顶栏日期回测；条件：按名单内股票批量回测（最多 8 只）。</span>
+      </div>
+      <div id="bt-strategies" class="chip-row"></div>
+      <div id="bt-stats" class="stats"></div>
+      <div id="bt-compare"></div>
+      <div id="bt-equity" class="chart"></div>
+      <div id="bt-chart" class="chart tall"></div>
+      <div id="bt-trades"></div>
+    </section>
+
+    <section class="view" id="view-signals">
+      <div class="toolbar">
+        <button class="btn primary" id="sig-run">分析买卖点</button>
+        <span class="hint">综合均线、RSI、MACD、布林、KDJ、SuperTrend、海龟、Dual Thrust、RSI2。滚轮缩放时间轴，左右拖动时价格轴四等分并自动变格。</span>
+      </div>
+      <div id="sig-head" class="stats"></div>
+      <div id="sig-chart" class="chart tall"></div>
+      <div id="sig-list"></div>
+    </section>
+
+    <section class="view" id="view-predict">
+      <div class="toolbar">
+        <label>回看天数
+          <input id="pred-lookback" type="number" value="30" min="15" max="80" />
+        </label>
+        <label>预测天数
+          <input id="pred-horizon" type="number" value="10" min="5" max="20" />
+        </label>
+        <button class="btn primary" id="pred-run">生成预测</button>
+      </div>
+      <div id="pred-head" class="stats"></div>
+      <div id="pred-chart" class="chart tall"></div>
+      <p class="hint" id="pred-note"></p>
+    </section>
+
+    <section class="view" id="view-similar">
+      <div class="toolbar">
+        <label>形态起点
+          <input id="sim-start" type="date" />
+        </label>
+        <label>形态终点
+          <input id="sim-end" type="date" />
+        </label>
+        <label>查找范围
+          <select id="sim-lookback">
+            <option value="30">最近 30 日</option>
+            <option value="60" selected>最近 60 日</option>
+            <option value="90">最近 90 日</option>
+            <option value="120">最近 120 日</option>
+            <option value="0">全部历史</option>
+          </select>
+        </label>
+        <label>样本池
+          <select id="sim-univ">
+            <option value="low20">主板低价股（≤20元，无科创/创业/ST）</option>
+            <option value="demo">核心样本（约24只）</option>
+            <option value="sz50">上证50</option>
+            <option value="hs300">沪深300</option>
+            <option value="zz500">中证500</option>
+          </select>
+        </label>
+        <button class="btn" id="sim-box" type="button">框选 K 线</button>
+        <button class="btn" id="univ-sync">缓存样本池行情</button>
+        <button class="btn primary" id="sim-run">寻找相似走势</button>
+      </div>
+      <div class="save-row">
+        <input id="sim-save-name" placeholder="给当前区间起个名字，例如 冲高回落" />
+        <button class="btn" id="sim-save" type="button">保存形态</button>
+        <label class="inline"><input id="sim-include-current" type="checkbox" checked /> 同时用当前区间</label>
+      </div>
+      <div id="sim-patterns" class="saved-list"></div>
+      <p class="hint">换股票时不会带默认框。点「框选 K 线」后在图上拖出一段时间；画完后点黄框或右上角 × 可删掉，Esc 撤销本次绘制。日期筛选仍然可用。方法是把选定区间的收盘价做 z-score，再在样本池里用滑动窗口算皮尔逊相关。</p>
+      <div id="sim-kline" class="chart tall"></div>
+      <div id="sim-picks"></div>
+      <div id="sim-study"></div>
+      <div id="sim-chart" class="chart"></div>
+      <div id="sim-table"></div>
+    </section>
+
+    <section class="view" id="view-screen">
+      <div class="toolbar">
+        <label>样本池
+          <select id="scr-univ">
+            <option value="low20">主板低价股（≤20元，无科创/创业/ST）</option>
+            <option value="demo">核心样本（约24只）</option>
+            <option value="sz50">上证50</option>
+            <option value="hs300">沪深300</option>
+            <option value="zz500">中证500</option>
+          </select>
+        </label>
+        <label>保存类型
+          <select id="scr-mode">
+            <option value="dynamic">动态条件</option>
+            <option value="static">静态条件</option>
+          </select>
+        </label>
+        <button class="btn" id="scr-sync">缓存行情</button>
+        <button class="btn" id="scr-add">加条件</button>
+        <button class="btn primary" id="scr-run">选股</button>
+      </div>
+      <div class="save-row">
+        <input id="scr-save-name" placeholder="给这组条件起名，例如 RSI 超卖" />
+        <button class="btn" id="scr-save" type="button">保存条件</button>
+      </div>
+      <div id="scr-saved" class="saved-list"></div>
+      <p class="hint">点击已保存的动态/静态条件显示对应股票，再点一次收起；全部取消后名单为空。新建静态条件默认没有股票，只有点中该静态名称后才能搜索或「加入当前股票」；未选中的和动态条件不能加股。可加多条条件且需同时满足，同一指标不能互相矛盾（例如 RSI&gt;70 又 RSI&lt;30）。</p>
+      <div id="scr-hit-add" class="save-row hidden">
+        <span id="scr-add-target" class="hint"></span>
+        <div class="search-wrap grow">
+          <input id="scr-add-symbol" placeholder="搜索代码或名称，加入静态名单" autocomplete="off" />
+          <div id="scr-add-suggest" class="suggest hidden"></div>
+        </div>
+        <button type="button" class="btn" id="scr-add-current">加入当前股票</button>
+      </div>
+      <div class="presets" id="scr-presets"></div>
+      <div id="scr-conds" class="conds"></div>
+      <p class="hint" id="scr-conflict"></p>
+      <div id="scr-table"></div>
+    </section>
+
+    <section class="view" id="view-auction">
+      <div class="toolbar">
+        <button class="btn primary" id="auc-run">分析竞价</button>
+        <span class="hint">单独看当前股票的早盘集合竞价（09:15–09:25）和尾盘集合竞价（14:57–15:00）。不改动其它页面。</span>
+      </div>
+      <div id="auc-open-head" class="stats"></div>
+      <div id="auc-open-chart" class="chart mini"></div>
+      <p class="hint" id="auc-open-note"></p>
+      <div id="auc-close-head" class="stats"></div>
+      <div id="auc-close-chart" class="chart mini"></div>
+      <p class="hint" id="auc-close-note"></p>
+      <div id="auc-hist" class="stats"></div>
+      <div id="auc-table"></div>
+      <p class="hint" id="auc-notes"></p>
+    </section>
+  </div>
+  <div id="drawer-mask" class="mask hidden"></div>
+  <aside id="drawer" class="drawer hidden" role="dialog" aria-label="股票详情">
+    <div class="drawer-handle" id="drawer-handle" title="拖动调整宽度，双击铺满"></div>
+    <div class="drawer-head">
+      <div>
+        <div id="drawer-title" class="drawer-title"></div>
+        <div id="drawer-sub" class="meta"></div>
+      </div>
+      <div class="drawer-actions">
+        <button class="btn star" id="drawer-watch">☆ 自选</button>
+        <button class="btn" id="drawer-signals">买卖点</button>
+        <button class="btn" id="drawer-backtest">回测</button>
+        <button class="btn" id="drawer-fill" title="铺满内容区">铺满</button>
+        <button class="btn" id="drawer-close">关闭</button>
+      </div>
+    </div>
+    <div id="drawer-stats" class="stats"></div>
+    <div id="drawer-chart" class="chart"></div>
+    <h2 class="section-title">详细提醒</h2>
+    <div id="drawer-alerts"></div>
+  </aside>
+
+  <div id="popup" class="popup-mask hidden">
+    <div class="popup" role="dialog" aria-labelledby="popup-title">
+      <h3 id="popup-title">自选提醒</h3>
+      <p class="hint">以下自选股近期出现买卖点，点击可查看 K 线与详细提醒。</p>
+      <div id="popup-list"></div>
+      <div class="popup-actions">
+        <button class="btn" id="popup-later">稍后</button>
+        <button class="btn primary" id="popup-ack">知道了</button>
+      </div>
+    </div>
+  </div>
+  <script src="/app.js?v=33"></script>
+</body>
+</html>

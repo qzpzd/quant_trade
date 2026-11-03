@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "形态匹配",
+  "usingComponents": {
+    "symbol-bar": "/components/symbol-bar/symbol-bar"
+  }
+}
